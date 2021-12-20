@@ -9,5 +9,6 @@ const router = express.Router();
 const AuthController = require('../controllers/authController');
 
 router.post('/request_token', AuthController.request_token);
+router.post('/access_token', AuthController.access_token);
 
 module.exports = router;
