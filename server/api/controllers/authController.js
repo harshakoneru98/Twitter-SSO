@@ -69,3 +69,23 @@ exports.logout = async (req, res, next) => {
         });
     }
 };
+
+//Authenticated resource access
+exports.getProfileInfo = async (req, res, next) => {
+    try {
+        const oauth_token = req.cookies[COOKIE_NAME];
+        const { oauth_access_token, oauth_access_token_secret } =
+            tokens[oauth_token];
+        const response = await oauth.getProtectedResource(
+            'https://api.twitter.com/1.1/account/verify_credentials.json',
+            'GET',
+            oauth_access_token,
+            oauth_access_token_secret
+        );
+        res.json(JSON.parse(response.data));
+    } catch (error) {
+        res.status(403).json({
+            message: 'Missing, invalid, or expired tokens'
+        });
+    }
+};

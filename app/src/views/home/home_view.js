@@ -28,6 +28,27 @@ function HomeView() {
         })();
     };
 
+    useEffect(() => {
+        (async () => {
+            try {
+                await fetch('http://localhost:8080/api/auth/getProfileInfo', {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        myCache.mset([
+                            { key: 'profile_data', val: data, ttl: 10000 }
+                        ]);
+                    });
+                let profile_data = myCache.mget(['profile_data']).profile_data;
+                console.log('Profile Data : ', profile_data);
+            } catch (error) {
+                console.error(error);
+            }
+        })();
+    }, []);
+
     return (
         <div>
             <p>This is Home Page</p>

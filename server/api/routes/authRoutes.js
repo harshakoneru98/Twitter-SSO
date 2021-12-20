@@ -11,5 +11,6 @@ const AuthController = require('../controllers/authController');
 router.post('/request_token', AuthController.request_token);
 router.post('/access_token', AuthController.access_token);
 router.post('/logout', AuthController.logout);
+router.get('/getProfileInfo', AuthController.getProfileInfo);
 
 module.exports = router;
