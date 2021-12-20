@@ -53,8 +53,15 @@ function MainView() {
                     })
                         .then((res) => res.json())
                         .then((data) => {
-                            console.log('Data : ', data);
+                            myCache.mset([
+                                { key: 'token_data', val: data, ttl: 10000 }
+                            ]);
                         });
+                    let token_data = myCache.mget(['token_data']).token_data;
+                    console.log('Token Data : ', token_data);
+                    if (token_data?.success) {
+                        window.location.href = '/incas/home';
+                    }
                 } catch (error) {
                     console.error(error);
                 }

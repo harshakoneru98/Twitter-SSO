@@ -12,17 +12,12 @@ exports.request_token = async (req, res, next) => {
         const { oauth_token, oauth_token_secret } =
             await oauth.getOAuthRequestToken();
 
-        // console.log('Body 0: ', req.cookies[COOKIE_NAME]);
-
         res.cookie(COOKIE_NAME, oauth_token, {
             maxAge: 15 * 60 * 1000 // 15 minutes
             // secure: true,
             // httpOnly: false,
             // sameSite: true
         });
-
-        console.log('Body 1: ', req.cookies[COOKIE_NAME]);
-        // console.log(document.cookie);
 
         tokens[oauth_token] = { oauth_token_secret };
 
@@ -35,7 +30,6 @@ exports.request_token = async (req, res, next) => {
 };
 
 exports.access_token = async (req, res, next) => {
-    console.log('Body 2 : ', req.cookies);
     try {
         const { oauth_token: req_oauth_token, oauth_verifier } = req.body;
         const oauth_token = req.cookies[COOKIE_NAME];
@@ -60,5 +54,18 @@ exports.access_token = async (req, res, next) => {
         res.json({ success: true });
     } catch (error) {
         res.status(403).json({ message: 'Missing access token' });
+    }
+};
+
+exports.logout = async (req, res, next) => {
+    try {
+        const oauth_token = req.cookies[COOKIE_NAME];
+        delete tokens[oauth_token];
+        res.cookie(COOKIE_NAME, {}, { maxAge: -1 });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(403).json({
+            message: 'Missing, invalid, or expired tokens'
+        });
     }
 };
